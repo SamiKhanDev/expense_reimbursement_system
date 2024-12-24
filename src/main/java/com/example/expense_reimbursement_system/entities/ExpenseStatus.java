@@ -8,17 +8,17 @@ public class ExpenseStatus {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column
-    private int id;
+    private Long id;
     @Column
     private String name;
     @Column
     private boolean status;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -38,7 +38,11 @@ public class ExpenseStatus {
         this.status = status;
     }
 
-    public ExpenseStatus(int id, String name, boolean status) {
+    public ExpenseStatus(){
+
+    }
+
+    public ExpenseStatus(Long id, String name, boolean status) {
         this.id = id;
         this.name = name;
         this.status = status;

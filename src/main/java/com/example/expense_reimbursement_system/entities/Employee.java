@@ -53,6 +53,10 @@ public class Employee {
         this.role = role;
     }
 
+    public Employee(){
+
+    }
+
     public Employee(Long id, String name, String email, Role role) {
         this.id = id;
         this.name = name;

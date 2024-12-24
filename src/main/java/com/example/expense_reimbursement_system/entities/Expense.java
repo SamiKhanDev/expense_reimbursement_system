@@ -10,7 +10,7 @@ public class Expense {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
@@ -30,11 +30,11 @@ public class Expense {
     @JoinColumn(name = "status_id", nullable = false)
     private ExpenseStatus status;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -94,7 +94,11 @@ public class Expense {
         this.approvalDate = approvalDate;
     }
 
-    public Expense(int id, Employee employee,
+    public Expense(){
+
+    }
+
+    public Expense(Long id, Employee employee,
                    int amount, String description,
                    Categories categories, ExpenseStatus status,
                    LocalDateTime submitDate, LocalDateTime approvalDate) {

@@ -29,6 +29,10 @@ public class Role {
         this.status = status;
     }
 
+    public Role(){
+
+    }
+
     public Role(Long id, String name, boolean status) {
         this.id = id;
         this.name = name;
