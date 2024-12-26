@@ -7,13 +7,14 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 @Table(name = "Categories")
 public class Categories {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+
+    @Column(nullable = false, length = 50)
     private String name;
-    @Column
-    private boolean status;
+
+    @Column(nullable = false)
+    private byte status;
 
     public Long getId() {
         return id;
@@ -31,21 +32,11 @@ public class Categories {
         this.name = name;
     }
 
-    public boolean isStatus() {
+    public byte getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public Categories (){
-
-    }
-
-    public Categories(Long id, String name, boolean status) {
-        this.id = id;
-        this.name = name;
+    public void setStatus(byte status) {
         this.status = status;
     }
 }

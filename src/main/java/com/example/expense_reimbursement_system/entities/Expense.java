@@ -5,30 +5,35 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Expense")
+@Table(name = "expense")
 public class Expense {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
-    @Column
-    private int amount;
+    @Column(nullable = false)
+    private Integer amount;
 
-    @Column (length = 500)
-    private String Description;
+    @Column(nullable = false, length = 500)
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Categories categories;
+    @OneToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Categories category;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "status_id", nullable = false)
     private ExpenseStatus status;
+
+    @Column(name = "submit_date", nullable = false)
+    private LocalDateTime submitDate;
+
+    @Column(name = "approval_date")
+    private LocalDateTime approvalDate;
 
     public Long getId() {
         return id;
@@ -46,36 +51,12 @@ public class Expense {
         this.employee = employee;
     }
 
-    public int getAmount() {
-        return amount;
+    public LocalDateTime getApprovalDate() {
+        return approvalDate;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public String getDescription() {
-        return Description;
-    }
-
-    public void setDescription(String description) {
-        Description = description;
-    }
-
-    public Categories getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Categories categories) {
-        this.categories = categories;
-    }
-
-    public ExpenseStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ExpenseStatus status) {
-        this.status = status;
+    public void setApprovalDate(LocalDateTime approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
     public LocalDateTime getSubmitDate() {
@@ -86,41 +67,35 @@ public class Expense {
         this.submitDate = submitDate;
     }
 
-    public LocalDateTime getApprovalDate() {
-        return approvalDate;
+    public ExpenseStatus getStatus() {
+        return status;
     }
 
-    public void setApprovalDate(LocalDateTime approvalDate) {
-        this.approvalDate = approvalDate;
-    }
-
-    public Expense(){
-
-    }
-
-    public Expense(Long id, Employee employee,
-                   int amount, String description,
-                   Categories categories, ExpenseStatus status,
-                   LocalDateTime submitDate, LocalDateTime approvalDate) {
-        this.id = id;
-        this.employee = employee;
-        this.amount = amount;
-        Description = description;
-        this.categories = categories;
+    public void setStatus(ExpenseStatus status) {
         this.status = status;
-        this.submitDate = submitDate;
-        this.approvalDate = approvalDate;
     }
 
-    @Column(nullable = false)
-    private LocalDateTime submitDate;
+    public Categories getCategory() {
+        return category;
+    }
 
-    @Column(nullable = false)
-    private LocalDateTime approvalDate;
+    public void setCategory(Categories category) {
+        this.category = category;
+    }
 
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
+    public Integer getAmount() {
+        return amount;
+    }
 
-
-
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+    }
 }

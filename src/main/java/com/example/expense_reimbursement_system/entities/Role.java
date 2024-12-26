@@ -5,6 +5,17 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "Role")
 public class Role {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 50)
+    private String name;
+
+    @Column(nullable = false)
+    private byte status;
+
     public Long getId() {
         return id;
     }
@@ -21,31 +32,11 @@ public class Role {
         this.name = name;
     }
 
-    public boolean isStatus() {
+    public byte getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(byte status) {
         this.status = status;
     }
-
-    public Role(){
-
-    }
-
-    public Role(Long id, String name, boolean status) {
-        this.id = id;
-        this.name = name;
-        this.status = status;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private boolean status;
 }
