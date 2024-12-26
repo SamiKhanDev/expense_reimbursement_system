@@ -4,20 +4,20 @@ import jakarta.persistence.*;
 
 
 @Entity
-@Table(name = "employee")
+@Table(name = "Employee")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
+    @OneToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
     public Long getId() {

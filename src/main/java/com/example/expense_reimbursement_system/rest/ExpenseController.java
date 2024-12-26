@@ -2,12 +2,12 @@ package com.example.expense_reimbursement_system.rest;
 
 import com.example.expense_reimbursement_system.entities.*;
 import com.example.expense_reimbursement_system.service.ExpenseService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -18,17 +18,36 @@ public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
 
+    @PostMapping("employee/{employeeId}/expense")
+    public ResponseEntity<Expense> createExpenseStatus(@PathVariable Long employeeId, @RequestBody Expense expense){
+        if (expense.getSubmitDate() == null) {
+            expense.setSubmitDate(LocalDateTime.now());
+        }
+        Expense savedExpense = expenseService.createExpense(employeeId,expense);
+        return ResponseEntity.ok(savedExpense);
+    }
 
-     // Submit a new expense request.
-
-    @PostMapping("/submit")
-    public ResponseEntity<Expense> submitExpense(@RequestBody @Valid Expense expense) {
-        return ResponseEntity.ok(expenseService.submitExpense(expense));
+    @PostMapping("/addEmployee")
+    public Employee addEmployee(@RequestBody Employee employee){
+        return expenseService.createEmployee(employee);
     }
 
 
-     // Get all pending expense requests.
+    // Endpoint for adding a new role
+    @PostMapping("/add-role")
+    public ResponseEntity<Role> addRole(@RequestBody Role role) {
+        // Add the new role
+        Role savedRole = expenseService.addRole(role);
+        return ResponseEntity.ok(savedRole);
+    }
 
+    @PostMapping("/addCategory")
+    public ResponseEntity<Categories> addCategory(@RequestBody Categories categories){
+        Categories save = expenseService.addCategory(categories);
+        return ResponseEntity.ok(save);
+    }
+
+    // Get all pending expense requests.
     @GetMapping("/pending")
     public ResponseEntity<List<Expense>> getPendingExpenses() {
         return ResponseEntity.ok(expenseService.getPendingExpenses());

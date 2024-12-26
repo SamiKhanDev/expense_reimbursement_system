@@ -1,10 +1,8 @@
 package com.example.expense_reimbursement_system.service;
 
-import com.example.expense_reimbursement_system.entities.Expense;
-import com.example.expense_reimbursement_system.entities.ExpenseStatus;
-import com.example.expense_reimbursement_system.repositories.EmployeeRepository;
-import com.example.expense_reimbursement_system.repositories.ExpenseRepository;
-import com.example.expense_reimbursement_system.repositories.ExpenseStatusRepository;
+import com.example.expense_reimbursement_system.entities.*;
+import com.example.expense_reimbursement_system.repositories.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,19 +24,47 @@ public class ExpenseService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-     // Submit a new expense by an employee.
+    @Autowired
+    private RoleRepository roleRepository;
 
-    public Expense submitExpense(Expense expense) {
-        expense.setSubmitDate(LocalDateTime.now());
-        ExpenseStatus pendingStatus = expenseStatusRepository.findById(1L) // 1 = Pending
-                .orElseThrow(() -> new RuntimeException("Pending status not found"));
-        expense.setStatus(pendingStatus);
+
+
+    // ExpenseService.java
+    public Expense createExpense(Long employeeId, Expense expense){
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with ID: " + employeeId));
+
+        ExpenseStatus newStatus = new ExpenseStatus();
+        newStatus.setName("Pending");
+        newStatus.setStatus((byte) 0);
+        ExpenseStatus savedStatus = expenseStatusRepository.save(newStatus);
+
+        expense.setStatus(savedStatus);
+        expense.setEmployee(employee);
+
+        expense.setApprovalDate(null);
         return expenseRepository.save(expense);
     }
 
+    // Add a new role
+    // ExpenseService.java
+    public Role addRole(Role role) {
+        // Save the new role
+        return roleRepository.save(role);
+    }
 
-     // Get all pending expenses for manager review.
+    public Employee  createEmployee(Employee employee){
+        return employeeRepository.save(employee);
+    }
+    public Categories addCategory(Categories categories){
+        return categoryRepository.save(categories);
+    }
+
+    // Get all pending expenses for manager review.
 
     public List<Expense> getPendingExpenses() {
         return expenseRepository.findAll().stream()
