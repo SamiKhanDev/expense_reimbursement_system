@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +30,37 @@ public class ExpenseService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private CategoryPackageRepository categoryPackageRepository;
+
+    @Autowired
+    private RoleExpenseLimitRepository roleCategoryPackageRepository;
+
+    public CategoryPackage addCategoryPackage(CategoryPackage categoryPackage) {
+        return categoryPackageRepository.save(categoryPackage);
+    }
+
+    // Save a RoleCategoryPackage
+    public RoleCategoryPackage addRoleCategoryPackage(RoleCategoryPackage roleCategoryPackage) {
+        return roleCategoryPackageRepository.save(roleCategoryPackage);
+    }
+
+    public List<CategoryPackage> getPackagesByCategory(Long categoryId) {
+        return categoryPackageRepository.findAll()
+                .stream()
+                .filter(pkg -> pkg.getCategory().getId().equals(categoryId))
+                .collect(Collectors.toList());
+    }
+
+    public boolean validateExpenseLimit(Long roleId, Long categoryPackageId, Integer expenseAmount) {
+        Optional<RoleCategoryPackage> roleCategoryPackage = roleCategoryPackageRepository.findById(categoryPackageId);
+        if (roleCategoryPackage.isPresent() &&
+                roleCategoryPackage.get().getRole().getId().equals(roleId)) {
+            return expenseAmount <= roleCategoryPackage.get().getCategoryPackage().getExpenseLimit();
+        }
+        return false;
+    }
 
 
 
@@ -71,6 +103,10 @@ public class ExpenseService {
                 .filter(expense -> expense.getStatus().getId().equals(1L)) // 1 = Pending
                 .collect(Collectors.toList());
     }
+    public List<CategoryPackage> getCategoryPackage(){
+        return categoryPackageRepository.findAll();
+    }
+
 
 
      // Update the status of an expense (Approve/Reject).

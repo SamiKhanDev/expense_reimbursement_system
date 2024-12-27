@@ -26,6 +26,19 @@ public class ExpenseController {
         Expense savedExpense = expenseService.createExpense(employeeId,expense);
         return ResponseEntity.ok(savedExpense);
     }
+    // Endpoint to add a CategoryPackage
+    @PostMapping("/add-category-package")
+    public ResponseEntity<CategoryPackage> addCategoryPackage(@RequestBody CategoryPackage categoryPackage) {
+        CategoryPackage savedPackage = expenseService.addCategoryPackage(categoryPackage);
+        return ResponseEntity.ok(savedPackage);
+    }
+
+    // Endpoint to add a RoleCategoryPackage
+    @PostMapping("/add-role-category-package")
+    public ResponseEntity<RoleCategoryPackage> addRoleCategoryPackage(@RequestBody RoleCategoryPackage roleCategoryPackage) {
+        RoleCategoryPackage savedPackage = expenseService.addRoleCategoryPackage(roleCategoryPackage);
+        return ResponseEntity.ok(savedPackage);
+    }
 
     @PostMapping("/addEmployee")
     public Employee addEmployee(@RequestBody Employee employee){
@@ -53,6 +66,11 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseService.getPendingExpenses());
     }
 
+    @GetMapping("/category")
+    public ResponseEntity<List<CategoryPackage>> getCategoryPackage(){
+        return ResponseEntity.ok(expenseService.getCategoryPackage());
+    }
+
 
      // Update the status of an expense request.
 
@@ -64,9 +82,19 @@ public class ExpenseController {
         return ResponseEntity.ok("Expense status updated successfully.");
     }
 
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<CategoryPackage>> getPackagesByCategory(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(expenseService.getPackagesByCategory(categoryId));
+    }
+
+    @PostMapping("/validate-expense")
+    public ResponseEntity<Boolean> validateExpense(@RequestBody ExpenseValidationRequest request) {
+        boolean isValid = expenseService.validateExpenseLimit(request.getRoleId(), request.getCategoryPackageId(), request.getExpenseAmount());
+        return ResponseEntity.ok(isValid);
+    }
+
 
      // Get the status of expenses for an employee within a specific date range.
-
     @GetMapping("/status/{employeeId}")
     public ResponseEntity<List<Expense>> getEmployeeExpenseStatus(
             @PathVariable Long employeeId,
@@ -79,7 +107,6 @@ public class ExpenseController {
 
 
      // Get expense history filtered by status.
-
     @GetMapping("/history/{statusId}")
     public ResponseEntity<List<Expense>> getExpenseHistoryByStatus(@PathVariable Long statusId) {
         return ResponseEntity.ok(expenseService.getExpenseHistoryByStatus(statusId));
