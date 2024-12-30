@@ -134,10 +134,38 @@ public class ExpenseService {
 
 
      // Get expense history filtered by status.
-
     public List<Expense> getExpenseHistoryByStatus(Long statusId) {
         return expenseRepository.findAll().stream()
                 .filter(expense -> expense.getStatus().getId().equals(statusId))
                 .collect(Collectors.toList());
     }
+
+    public Integer getRemainingAmountForEmployee(Long employeeId) {
+        // Step 1: Fetch the employee by their ID
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with ID: " + employeeId));
+
+        // Step 2: Find all expenses for this employee
+        List<Expense> employeeExpenses = expenseRepository.findAllByEmployeeId(employeeId);
+
+        // Step 3: Fetch the role of the employee and its associated CategoryPackage
+        RoleCategoryPackage roleCategoryPackage = roleCategoryPackageRepository.findByRoleId(employee.getRole().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Category package not found for role ID: " + employee.getRole().getId()));
+
+        CategoryPackage categoryPackage = roleCategoryPackage.getCategoryPackage();
+
+        // Step 4: Calculate the total expenses for the category
+        Integer totalExpenses = employeeExpenses.stream()
+                .filter(expense -> expense.getCategory().getId().equals(categoryPackage.getCategory().getId()))
+                .mapToInt(Expense::getAmount)
+                .sum();
+
+        // Step 5: Calculate remaining amount
+        int remainingAmount = categoryPackage.getExpenseLimit() - totalExpenses;
+
+        // Return remaining amount, ensuring it's not negative
+        return Math.max(remainingAmount, 0);
+    }
+
+
 }

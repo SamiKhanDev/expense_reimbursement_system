@@ -94,6 +94,13 @@ public class ExpenseController {
     }
 
 
+    @GetMapping("/{employeeId}/remaining-amount")
+    public ResponseEntity<Integer> getRemainingAmount(@PathVariable Long employeeId) {
+        Integer remainingAmount = expenseService.getRemainingAmountForEmployee(employeeId);
+        return ResponseEntity.ok(remainingAmount);
+    }
+
+
      // Get the status of expenses for an employee within a specific date range.
     @GetMapping("/status/{employeeId}")
     public ResponseEntity<List<Expense>> getEmployeeExpenseStatus(
