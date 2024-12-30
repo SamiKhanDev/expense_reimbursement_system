@@ -1,5 +1,7 @@
 package com.example.expense_reimbursement_system.rest;
 
+import com.example.expense_reimbursement_system.dto.ExpenseValidationRequest;
+import com.example.expense_reimbursement_system.dto.UpdateExpenseStatusRequest;
 import com.example.expense_reimbursement_system.entities.*;
 import com.example.expense_reimbursement_system.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,12 +77,23 @@ public class ExpenseController {
      // Update the status of an expense request.
 
     @PatchMapping("/status")
-    public ResponseEntity<String> updateExpenseStatus(@RequestBody Map<String, Long> request) {
-        Long expenseId = request.get("expenseId");
-        Long statusId = request.get("statusId");
+    public ResponseEntity<String> updateExpenseStatus(@RequestBody UpdateExpenseStatusRequest request) {
+        Long expenseId = request.getExpenseId();
+        Long statusId = request.getStatusId();
+
+        // Validate statusId
+        if (!isValidStatusId(statusId)) {
+            throw new IllegalArgumentException("Invalid status ID. Allowed values are 4 (Approved) and 5 (Rejected).");
+        }
+
         expenseService.updateExpenseStatus(expenseId, statusId);
         return ResponseEntity.ok("Expense status updated successfully.");
     }
+
+    private boolean isValidStatusId(Long statusId) {
+        return statusId == 4 || statusId == 5;
+    }
+
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<CategoryPackage>> getPackagesByCategory(@PathVariable Long categoryId) {
@@ -114,8 +127,9 @@ public class ExpenseController {
 
 
      // Get expense history filtered by status.
-    @GetMapping("/history/{statusId}")
-    public ResponseEntity<List<Expense>> getExpenseHistoryByStatus(@PathVariable Long statusId) {
-        return ResponseEntity.ok(expenseService.getExpenseHistoryByStatus(statusId));
-    }
+     @GetMapping("/history/{statusId}")
+     public ResponseEntity<List<Expense>> getExpenseHistoryByStatus(@PathVariable Long statusId) {
+         return ResponseEntity.ok(expenseService.getExpenseHistoryByStatus(statusId));
+     }
+
 }

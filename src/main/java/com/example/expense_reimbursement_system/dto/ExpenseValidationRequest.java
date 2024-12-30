@@ -1,4 +1,4 @@
-package com.example.expense_reimbursement_system.entities;
+package com.example.expense_reimbursement_system.dto;
 
 public class ExpenseValidationRequest {
     private Long roleId;

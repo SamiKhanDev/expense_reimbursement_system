@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -134,11 +135,14 @@ public class ExpenseService {
 
 
      // Get expense history filtered by status.
-    public List<Expense> getExpenseHistoryByStatus(Long statusId) {
-        return expenseRepository.findAll().stream()
-                .filter(expense -> expense.getStatus().getId().equals(statusId))
-                .collect(Collectors.toList());
-    }
+     public List<Expense> getExpenseHistoryByStatus(Long statusId) {
+         return expenseRepository.findAll().stream()
+                 .filter(expense -> expense.getStatus().getId().equals(statusId))
+                 .sorted(Comparator.comparing((Expense expense) -> expense.getCategory().getName())
+                         .thenComparing(Expense::getSubmitDate))
+                 .collect(Collectors.toList());
+     }
+
 
     public Integer getRemainingAmountForEmployee(Long employeeId) {
         // Step 1: Fetch the employee by their ID
