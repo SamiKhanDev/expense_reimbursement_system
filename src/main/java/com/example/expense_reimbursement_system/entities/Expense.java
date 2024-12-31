@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Expense")
+@Table(name = "expense")
 public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,11 +21,11 @@ public class Expense {
     @Column(nullable = false, length = 500)
     private String description;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Categories category;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private ExpenseStatus status;
 
