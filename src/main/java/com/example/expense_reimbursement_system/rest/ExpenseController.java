@@ -1,9 +1,14 @@
 package com.example.expense_reimbursement_system.rest;
 
+import com.example.expense_reimbursement_system.dto.ExpenseDTO;
 import com.example.expense_reimbursement_system.dto.ExpenseValidationRequest;
 import com.example.expense_reimbursement_system.dto.UpdateExpenseStatusRequest;
 import com.example.expense_reimbursement_system.entities.*;
+import com.example.expense_reimbursement_system.repositories.CategoryRepository;
+import com.example.expense_reimbursement_system.repositories.EmployeeRepository;
+import com.example.expense_reimbursement_system.repositories.ExpenseStatusRepository;
 import com.example.expense_reimbursement_system.service.ExpenseService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +23,13 @@ public class ExpenseController {
 
     @Autowired
     private ExpenseService expenseService;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private ExpenseStatusRepository expenseStatusRepository;
 
     // ----------------------------------
     // POST Endpoints
@@ -25,18 +37,43 @@ public class ExpenseController {
 
     /**
      * Create a new expense for an employee.
-     * @param employeeId ID of the employee.
-     * @param expense Expense object with details.
      * @return Saved Expense object.
      */
-    @PostMapping("employee/{employeeId}/expense")
-    public ResponseEntity<Expense> createExpenseStatus(@PathVariable Long employeeId, @RequestBody Expense expense) {
+    @PostMapping("expense")
+    public ResponseEntity<Expense> createExpenseStatus(@RequestBody ExpenseDTO expenseDTO) {
+        if (expenseDTO == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Expense expense = new Expense();
+        expense.setAmount(expenseDTO.getAmount());
+        expense.setDescription(expenseDTO.getDescription());
+
+        // Fetch the employee from the database using the employeeId from the DTO
+        Employee employee = employeeRepository.findById(expenseDTO.getEmployeeId())
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with ID: " + expenseDTO.getEmployeeId()));
+        expense.setEmployee(employee);
+
+        // Fetch the category using the categoryId from the DTO
+        Categories category = categoryRepository.findById(expenseDTO.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + expenseDTO.getCategoryId()));
+        expense.setCategory(category);
+
+        // Set the status (e.g., Pending) as before
+        ExpenseStatus pendingStatus = expenseStatusRepository.findById(1L)
+                .orElseThrow(() -> new EntityNotFoundException("Status not found with ID: 1"));
+        expense.setStatus(pendingStatus);
+
+        // Set the submit date
         if (expense.getSubmitDate() == null) {
             expense.setSubmitDate(LocalDateTime.now());
         }
-        Expense savedExpense = expenseService.createExpense(employeeId, expense);
+
+        // Save and return the expense
+        Expense savedExpense = expenseService.createExpense(expense);
         return ResponseEntity.ok(savedExpense);
     }
+
 
     /**
      * Add a new CategoryPackage.
@@ -134,6 +171,13 @@ public class ExpenseController {
     public ResponseEntity<List<CategoryPackage>> getPackagesByCategory(@PathVariable Long categoryId) {
         return ResponseEntity.ok(expenseService.getPackagesByCategory(categoryId));
     }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<Categories>> getAllCategories() {
+        List<Categories> categories = expenseService.getCategories();
+        return ResponseEntity.ok(categories);
+    }
+
 
     /**
      * Get the remaining amount for an employee.

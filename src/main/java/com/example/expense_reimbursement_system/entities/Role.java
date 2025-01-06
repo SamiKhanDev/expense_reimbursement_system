@@ -3,7 +3,7 @@ package com.example.expense_reimbursement_system.entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Role")
+@Table(name = "role")
 public class Role {
 
     @Id

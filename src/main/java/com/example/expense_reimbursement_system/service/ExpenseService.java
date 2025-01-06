@@ -88,24 +88,14 @@ public class ExpenseService {
 
     /**
      * Create a new expense for an employee.
-     * @param employeeId the ID of the employee.
      * @param expense the expense to create.
      * @return the created Expense.
      */
-    public Expense createExpense(Long employeeId, Expense expense) {
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with ID: " + employeeId));
-
-        // Fetch the predefined "Pending" status using the status ID (e.g., 1)
-        ExpenseStatus pendingStatus = expenseStatusRepository.findById(1L)
-                .orElseThrow(() -> new EntityNotFoundException("Status not found with ID: 1"));
-
-        expense.setStatus(pendingStatus); // Set the status to "Pending"
-        expense.setEmployee(employee);
-        expense.setApprovalDate(null); // Set approval date to null since it's not approved yet
-
+    public Expense createExpense(Expense expense) {
+        // Assuming employee, category, and status have already been set in the controller
         return expenseRepository.save(expense); // Save and return the expense
     }
+
 
     // ===========================
     // GET Endpoints
@@ -139,6 +129,10 @@ public class ExpenseService {
      */
     public List<CategoryPackage> getCategoryPackage() {
         return categoryPackageRepository.findAll();
+    }
+
+    public List<Categories> getCategories(){
+        return categoryRepository.findAll();
     }
 
     /**

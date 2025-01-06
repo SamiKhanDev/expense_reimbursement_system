@@ -5,20 +5,20 @@ services:
     build:
       dockerfile: DOCKERFILE
     ports:
-      - "9090:9090"
+      - "9090:9090" # Expose the app service on port 9090
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/expense_reimbursement_system_2
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/expense_reimbursement_system_2
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 12345678
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
   db:
-    image: mysql:9.1.0
+    image: mysql:8.0
     container_name: mysql-container
     ports:
-      - "9090:9090"
+      - "3306:3306" # Expose the MySQL database on port 3306
     environment:
       MYSQL_DATABASE: expense_reimbursement_system_2
       MYSQL_ROOT_PASSWORD: 12345678
