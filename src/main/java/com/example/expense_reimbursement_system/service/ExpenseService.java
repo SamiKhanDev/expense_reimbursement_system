@@ -163,6 +163,11 @@ public class ExpenseService {
                 .collect(Collectors.toList());
     }
 
+    public List<Expense> getExpenseHistory(){
+        return expenseRepository.findAll();
+    }
+
+
     /**
      * Get the remaining expense limit for an employee.
      * @param employeeId the ID of the employee.

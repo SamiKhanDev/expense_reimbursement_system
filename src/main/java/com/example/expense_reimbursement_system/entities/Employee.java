@@ -2,7 +2,6 @@ package com.example.expense_reimbursement_system.entities;
 
 import jakarta.persistence.*;
 
-
 @Entity
 @Table(name = "employee")
 public class Employee {
@@ -16,10 +15,17 @@ public class Employee {
     @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
+    @Column(name = "username", nullable = false, unique = true, length = 50)
+    private String username;
+
+    @Column(name = "password", nullable = false, length = 255)
+    private String password;
+
     @OneToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -44,6 +50,22 @@ public class Employee {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Role getRole() {
         return role;
     }
@@ -52,14 +74,15 @@ public class Employee {
         this.role = role;
     }
 
-    public Employee(){
+    // Constructors
+    public Employee() {}
 
-    }
-
-    public Employee(Long id, String name, String email, Role role) {
+    public Employee(Long id, String name, String email, String username, String password, Role role) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.username = username;
+        this.password = password;
         this.role = role;
     }
 }
